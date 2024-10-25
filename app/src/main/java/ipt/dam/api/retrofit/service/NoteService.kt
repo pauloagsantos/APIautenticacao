@@ -12,6 +12,9 @@ interface NoteService {
     @GET("API/getNotes.php")
     fun list(): Call<List<Note>>
 
+    @GET("API/reset.php")
+    fun reset(): Call<List<Note>>
+
     @FormUrlEncoded
     @POST("API/addNote.php")
     fun addNote(@Field("title") title: String?, @Field("description") description: String?): Call<APIResult>

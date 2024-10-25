@@ -36,11 +36,23 @@ class NoteListActivity : AppCompatActivity(), Runnable {
             addDummyNote()
         }
 
+        val reset: Button = findViewById(R.id.btnReset)
+        reset.setOnClickListener {
+            reset()
+        }
+
         t.start()
     } // oncreate
 
     private fun listNotes() {
-        val call = RetrofitInitializer().noteService().list()
+        processNotes(RetrofitInitializer().noteService().list())
+    }
+
+    private fun reset() {
+        processNotes(RetrofitInitializer().noteService().reset())
+    }
+
+    private fun processNotes(call:Call<List<Note>>) {
         call.enqueue(object : Callback<List<Note>?> {
             override fun onResponse(call: Call<List<Note>?>?,
                                     response: Response<List<Note>?>?) {
