@@ -4,17 +4,59 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/button"
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnListNotes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="List" />
+
+        <Button
+            android:id="@+id/btnListNotesBA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="List BA" />
+
+        <Button
+            android:id="@+id/btnListNotesJWT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="List JWT" />
+
+    </LinearLayout>
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+    <Button
+        android:id="@+id/btnAddNote"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add Random Note" />
 
     <Button
         android:id="@+id/btnReset"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Reset" />
+
+    <Button
+        android:id="@+id/btnClear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear" />
+
+    </LinearLayout>
 
 
 

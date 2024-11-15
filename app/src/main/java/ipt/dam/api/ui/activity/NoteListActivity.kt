@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import ipt.dam.api.R
 import ipt.dam.api.model.APIResult
 import ipt.dam.api.model.Note
+import ipt.dam.api.model.TokenJWT
 import ipt.dam.api.retrofit.RetrofitInitializer
 import ipt.dam.api.ui.adapter.NoteListAdapter
+import okhttp3.Credentials
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -25,27 +27,86 @@ class NoteListActivity : AppCompatActivity(), Runnable {
 
     private var t:Thread = Thread(this)
 
+    private var token:String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note_list)
 
-        listNotes()
 
-        val button: Button = findViewById(R.id.button)
-        button.setOnClickListener {
+
+        val btnListNotes: Button = findViewById(R.id.btnListNotes)
+        btnListNotes.setOnClickListener {
+            listNotes()
+        }
+
+        val btnAddNote: Button = findViewById(R.id.btnAddNote)
+        btnAddNote.setOnClickListener {
             addDummyNote()
         }
 
-        val reset: Button = findViewById(R.id.btnReset)
-        reset.setOnClickListener {
+        val btnReset: Button = findViewById(R.id.btnReset)
+        btnReset.setOnClickListener {
             reset()
         }
 
-        t.start()
+        val btnClear: Button = findViewById(R.id.btnClear)
+        btnClear.setOnClickListener {
+            configureList(emptyList())
+        }
+
+        val btnGetNotesBA: Button = findViewById(R.id.btnListNotesBA)
+        btnGetNotesBA.setOnClickListener {
+            listNotesBA()
+        }
+
+        val btnGetNotesJWT: Button = findViewById(R.id.btnListNotesJWT)
+        btnGetNotesJWT.setOnClickListener {
+            listNotesJWT();
+        }
+
+        //t.start()
     } // oncreate
 
     private fun listNotes() {
         processNotes(RetrofitInitializer().noteService().list())
+    }
+
+    private fun listNotesBA() {
+        processNotes(RetrofitInitializer().noteService().listBA( Credentials.basic("admin", "admin")))
+    }
+
+    private fun listNotesJWT() {
+        if (token.equals("") )
+             loginJWT("admin", "admin") {
+                token = it?.token.toString()
+                Toast.makeText(this,"Token " + it?.token,Toast.LENGTH_SHORT).show()
+                val call = RetrofitInitializer().noteService().listJWT(token = "Bearer "+it?.token);
+                processNotes(call)
+            }
+        else {
+            val call = RetrofitInitializer().noteService().listJWT(token = "Bearer "+token);
+            processNotes(call)
+            Toast.makeText(this,"Use previous Token " + token,Toast.LENGTH_SHORT).show()
+
+        }
+
+    }
+
+    private fun loginJWT(username: String, password: String,  onResult: (TokenJWT?) -> Unit){
+        val call = RetrofitInitializer().noteService().loginJWT(username, password)
+        call.enqueue(
+            object : Callback<TokenJWT> {
+                override fun onFailure(call: Call<TokenJWT>, t: Throwable) {
+                    t.printStackTrace()
+                    onResult(null)
+                }
+                override fun onResponse( call: Call<TokenJWT>, response: Response<TokenJWT>) {
+                    val tokenResult = response.body()
+                    onResult(tokenResult)
+                }
+            }
+        )
     }
 
     private fun reset() {
